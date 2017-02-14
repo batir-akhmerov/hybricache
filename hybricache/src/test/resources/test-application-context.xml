@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	
+	<context:property-placeholder location="classpath:application.properties" ignore-resource-not-found="false"/>
+	
+	<!-- 
+	<bean id="defaultEhCacheConfiguration" class="net.sf.ehcache.config.CacheConfiguration">
+		<property name="maxEntriesLocalHeap" value="10000" />
+		<property name="maxEntriesLocalDisk" value="1000" />
+		<property name="eternal" value="false" />
+		<property name="diskSpoolBufferSizeMB" value="20" />
+		<property name="timeToIdleSeconds" value="300" />
+		<property name="timeToLiveSeconds" value="600" />
+		<property name="memoryStoreEvictionPolicy" value="LFU" />
+		<property name="transactionalMode" value="off" />
+	</bean>
+	
+	<bean name="defaultHybridConfiguration" class="org.r3p.cache.hybrid.HybridCacheConfiguration">
+		<property name="ehCacheConfiguration" ref="defaultEhCacheConfiguration" />
+		<property name="cacheType">
+			<util:constant static-field="org.r3p.cache.hybrid.HybridCacheConfiguration.CacheType.LOCAL"/>
+		</property>
+	</bean>	
+	 -->
+ 
+</beans>
