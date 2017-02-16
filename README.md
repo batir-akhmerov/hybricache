@@ -1,7 +1,7 @@
 # HybriCache
 HybriCache is a hybrid cache solution based on EhCache and Redis. HybriCache is almost as fast as EhCache and Redis utilization makes HybriCache a Cluster Environment friendly. HybriCache is ideal solution if you’re switching over to a clustered environment of Amazon Web Service and need a fast caching library. If your application is already configured for EhCache – that’s even easier, HybriCache uses existing EhCache configuration, just add HybriCache jar to the classpath, replace EhCacheManager with HybriCacheManager in a spring context and set Elasticache server’s Host and Port to the HybriCacheManager instance. And that is all.
 
-# What is wrong with AWS Elasticache? 
+## What is wrong with AWS Elasticache? 
 AWS Elasticache Redis is a non-sql in-memory database and:
 
 1.	It’s located in a separate server instance, which is being accessed over TCP/IP protocol.
@@ -30,8 +30,8 @@ As you can see above - EhCache is almost 15 times faster than Redis caching.
 So, what is wrong with AWS Elasticache?  - Network Latency and Time needed for object Serialization.
 
 
-# Why HybriCache is faster than AWS Elasticache Redis?
-HybriCache utilizes a hybrid cache model when EhCache and Redis work together caching objects on both sides:
+## Why HybriCache is faster than AWS Elasticache Redis?
+HybriCache  is NOT a replacement for AWS Elasticache nor EhCache. HybriCache utilizes a hybrid cache model when EhCache and Redis work together caching objects on both sides:
 
 1.	Caching Locally (EhCache) on a webserver instance for faster access.
 
@@ -39,8 +39,114 @@ HybriCache utilizes a hybrid cache model when EhCache and Redis work together ca
 
 Cached Objects are synchronized using Revisions:
 
--	If a Local Cache Revision matches a Remote Cache Revision – Cached Object is extracted from a fast Local Cache (EhCache).
+*	If a Local Cache Revision matches a Remote Cache Revision – Cached Object is extracted from a fast Local Cache (EhCache).
 
--	Otherwise Cached Object is taken from a Remote Cache (Redis) and HybriCache updates Local Cache along with its Revision.
+*	Otherwise Cached Object is taken from a Remote Cache (Redis) and HybriCache updates Local Cache along with its Revision.
 
 “Key Trust Period” is another mechanism that makes HybriCache even faster. “Key Trust Period” is a time period in milliseconds in which HybriCache can trust the Local Cache Revision. This is useful when objects are rarely changed in Cache but might be extracted from HybriCache more than once during one server’s response. Setting “Key Trust Period” can prevent redundant calls to Redis trying to verify Remote Cache Revision. “Key Trust Period” default value is 1000 milliseconds and it can be set per each Cache Database.
+There are 3 Cache Types in HybriCache:
+
+1. HYBRID default cache type utilizing hybrid caching model (see above).
+2. LOCAL caches objects ONLY using EhCache instance running in a particular webserver. No clustering is supported by this type of cache. A fastest type of cache. Useful for caches when synchronization with a cluster is not critical but speed is important, e.g. caching of Merged CSS and JS resources.
+3. REMOTE caches objects ONLY using AWS Elasticache Redis instance. Clustering is supported. Slowest cache type among all 3 types. Used for object caches when speed is not critical but immediate cache availability in a cluster is highly important, e.g. caching of User’s Session metadata.
+
+
+## Getting Started
+
+1. Download the latest [hybricache.jar]( https://github.com/batir-akhmerov/hybricache/raw/master/hybricache/target/hybricache-0.0.1.jar)
+
+2. Download other dependencies jars (if your application does not use them yet). A full list of dependencies is in [pom.xml](https://raw.githubusercontent.com/batir-akhmerov/hybricache/master/hybricache/pom.xml)
+
+3. Include jars into a .classpath file:
+```
+	<classpathentry kind="lib" path="hybricache.jar"/>
+  <!-- include all other dependencies jars if needed -->
+
+```
+4. Configure Caches. If your application already uses EhCache then by default no additional configuration is needed. HybriCache will configure itself for all EhCache Caches set in ehcache.xml. Here is a sample ehcache.xml:
+```
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="ehcache.xsd"
+	updateCheck="true"
+	monitoring="autodetect"
+	dynamicConfig="true">
+	
+	<cache name="mergedCssJsCache" ...>
+		...
+	</cache>
+		
+	<cache name="userSessionCache" ...>
+		...
+	</cache>
+		
+	<cache name="daoBeanCache" ...>
+		...
+	</cache>
+	
+</ehcache>
+```
+All 3 caches above will be configured with HybriCache defaults: HYBRID type and 1000 milliseconds Key Trust Period.
+
+To define custom HybriCache configuration for certain/all pre-configured EhCaches – provide HybriCache configuration via hybriCacheConfigurationList list in spring-context.xml or ApplicationConfiguration class:
+
+```
+  @Configuration
+  public class AppContextConfiguration  {	
+	@Bean
+	public List<HybriCacheConfiguration> hybriCacheConfigurationList() {
+		List<HybriCacheConfiguration> list = new ArrayList<>();
+		list.add( new HybriCacheConfiguration(
+				"mergedCssJsCache",
+				CacheType.LOCAL,
+				0
+			)
+		);
+		list.add( new HybriCacheConfiguration(
+				"userSessionCache",
+				CacheType.REMOTE,
+				0
+			)
+		);
+		return list;		
+	}	
+}
+```
+Here mergedCssJsCache is configured as a LOCAL cache and userSessionCache as REMOTE. 
+Cache daoBeanCache will be a HYBRID cache by default.
+
+5. Declare default application cacheManager. If ehCacheManager was a default manager - rename it since it's needed for HybriCache, otherwise declare ehCahceManager too:
+
+```
+@Configuration
+public class AppContextConfiguration {
+	
+	@Inject protected Environment env;
+	
+	@Bean
+	public HybriCacheManager cacheManager() {
+		String host = this.env.getProperty("remote.cache.server.host");
+		String port = this.env.getProperty("remote.cache.server.port");
+		Integer intPort = null;
+		if (port != null) {
+			intPort = Integer.parseInt(port);
+		}		
+		HybriCacheManager cacheManager =  new HybriCacheManager( new EhCacheCacheManager(ehCacheCacheManager().getObject()), host,  intPort);
+		cacheManager.setHybriCacheConfigurationList(hybriCacheConfigurationList());
+		return cacheManager;
+	}
+
+	@Bean
+	public EhCacheManagerFactoryBean ehCacheCacheManager() {
+		EhCacheManagerFactoryBean cmfb = new EhCacheManagerFactoryBean();
+		cmfb.setConfigLocation(new ClassPathResource("ehcache.xml"));
+		cmfb.setShared(true);
+		return cmfb;
+	}
+  
+  @Bean
+	public List<HybriCacheConfiguration> hybriCacheConfigurationList() {
+		...
+	}	
+}
+
+```
