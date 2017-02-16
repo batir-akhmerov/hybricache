@@ -1,9 +1,9 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.remote;
+package org.hybricache.remote;
 
-import org.r3p.cache.hybrid.HybridCacheConfiguration;
+import org.hybricache.HybriCacheConfiguration;
 
 /**
  * The RemoteCacheFactory class
@@ -14,6 +14,6 @@ import org.r3p.cache.hybrid.HybridCacheConfiguration;
 public interface RemoteCacheFactory {
 	
 	@SuppressWarnings("rawtypes")
-	public RemoteCache getInstance(HybridCacheConfiguration conf);
+	public RemoteCache getInstance(HybriCacheConfiguration conf);
 
 }

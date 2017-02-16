@@ -1,17 +1,17 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid;
+package org.hybricache;
 
 import net.sf.ehcache.config.CacheConfiguration;
 
 /**
- * The HybridCacheConfiguration class
+ * The HybriCacheConfiguration class
  *
  * @author Batir Akhmerov
  * Created on Jan 27, 2017
  */
-public class HybridCacheConfiguration {
+public class HybriCacheConfiguration {
 	
 	public enum CacheType{HYBRID, LOCAL, REMOTE};
 	public enum CacheMode{VALUE, HASH};
@@ -19,7 +19,7 @@ public class HybridCacheConfiguration {
 	public static final int KEY_TRUST_PERIOD_1SEC = 1000;
 	
 	private String cacheName;
-	private String hashCacheName;
+	//private String hashCacheName;
 	private CacheConfiguration ehCacheConfiguration;
 	private CacheType cacheType = CacheType.HYBRID;
 	private int keyTrustPeriod = KEY_TRUST_PERIOD_ALWAYS;
@@ -28,19 +28,19 @@ public class HybridCacheConfiguration {
 	private Integer databaseIndex;
 	private CacheMode cacheMode = CacheMode.VALUE; 
 	
-	public HybridCacheConfiguration() {
+	public HybriCacheConfiguration() {
 		
 	}
 	
-	public HybridCacheConfiguration(String cacheName, CacheType cacheType, int keyTrustPeriod) {
+	public HybriCacheConfiguration(String cacheName, CacheType cacheType, int keyTrustPeriod) {
 		this(cacheName, cacheType, keyTrustPeriod, null);
 	}
 	
-	public HybridCacheConfiguration(CacheType cacheType, int keyTrustPeriod, CacheConfiguration ehCacheConfiguration) {
+	public HybriCacheConfiguration(CacheType cacheType, int keyTrustPeriod, CacheConfiguration ehCacheConfiguration) {
 		this(ehCacheConfiguration.getName(), cacheType, keyTrustPeriod, ehCacheConfiguration);
 	}
 	
-	public HybridCacheConfiguration(String cacheName, CacheType cacheType, int keyTrustPeriod, CacheConfiguration ehCacheConfiguration) {
+	public HybriCacheConfiguration(String cacheName, CacheType cacheType, int keyTrustPeriod, CacheConfiguration ehCacheConfiguration) {
 		this.cacheName = cacheName;
 		this.cacheType = cacheType;
 		this.keyTrustPeriod = keyTrustPeriod;
@@ -48,8 +48,12 @@ public class HybridCacheConfiguration {
 	}
 	
 	
-	
-	
+
+	@Override
+	public String toString() {
+		return String.format("HybriCacheConf: %s, keyTrustPeriod: %d, type: %s, mode: %s", this.cacheName, this.keyTrustPeriod, this.cacheType, this.cacheMode);
+	}
+
 	/**
 	 * Returns EhCache CacheConfiguration 
 	 * @return the ehCacheConfiguration
@@ -122,20 +126,20 @@ public class HybridCacheConfiguration {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HybridCacheConfiguration) {
-			return getCacheName().equals(((HybridCacheConfiguration)obj).getCacheName());
+		if (obj instanceof HybriCacheConfiguration) {
+			return getCacheName().equals(((HybriCacheConfiguration)obj).getCacheName());
 		}
 		return false;
 	}
 
 	@Override
-	protected HybridCacheConfiguration clone() {
-		HybridCacheConfiguration conf = new HybridCacheConfiguration(this.cacheName, this.cacheType, this.keyTrustPeriod, this.ehCacheConfiguration);
+	protected HybriCacheConfiguration clone() {
+		HybriCacheConfiguration conf = new HybriCacheConfiguration(this.cacheName, this.cacheType, this.keyTrustPeriod, this.ehCacheConfiguration);
 		conf.setRemoteServerPort(this.getRemoteServerPort());
 		conf.setRemoteSeverHost(this.getRemoteSeverHost());
 		conf.setDatabaseIndex(this.getDatabaseIndex());
 		conf.setCacheMode(this.getCacheMode());
-		conf.setHashCacheName(this.getHashCacheName());
+		//conf.setHashCacheName(this.getHashCacheName());
 		return conf;
 	}
 
@@ -203,12 +207,5 @@ public class HybridCacheConfiguration {
 		this.cacheMode = cacheMode;
 	}
 
-	public String getHashCacheName() {
-		return this.hashCacheName;
-	}
-
-	public void setHashCacheName(String hashCacheName) {
-		this.hashCacheName = hashCacheName;
-	}
 
 }

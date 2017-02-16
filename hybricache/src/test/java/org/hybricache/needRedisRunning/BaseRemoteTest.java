@@ -1,12 +1,13 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid;
+package org.hybricache.needRedisRunning;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.r3p.cache.hybrid.remote.RemoteValueWrapper;
+import org.hybricache.HybriCacheConfiguration;
+import org.hybricache.remote.RemoteValueWrapper;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,9 +24,9 @@ public class BaseRemoteTest extends BaseTest {
 	
 	protected JedisConnectionFactory jedisConnectionFactory;
 	protected RedisTemplate<String, RemoteValueWrapper<Object>> redisTemplate;
-	protected HybridCacheConfiguration config;
+	protected HybriCacheConfiguration config;
 	
-	public RedisTemplate<String, RemoteValueWrapper<Object>> initRedis(HybridCacheConfiguration conf) {
+	public RedisTemplate<String, RemoteValueWrapper<Object>> initRedis(HybriCacheConfiguration conf) {
 		this.config = conf;
 		
 		this.jedisConnectionFactory = new JedisConnectionFactory();

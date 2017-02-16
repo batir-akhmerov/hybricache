@@ -1,18 +1,17 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.remote;
+package org.hybricache.needRedisRunning.redisTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.util.List;
 
+import org.hybricache.HybriCacheConfiguration;
+import org.hybricache.needRedisRunning.BaseRemoteTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.r3p.cache.hybrid.BaseRemoteTest;
-import org.r3p.cache.hybrid.HybridCacheConfiguration;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -31,12 +30,12 @@ public class RemoteCacheTest1 extends BaseRemoteTest {
 	
 	@Test
 	public void test() {
-		String cacheName = "remoteCache";
+		String cacheName = "redisCache";
 		
-		List<HybridCacheConfiguration> confList = this.cacheManager.getHybridCacheConfigurationList();
+		List<HybriCacheConfiguration> confList = this.cacheManager.getHybriCacheConfigurationList();
 		assertFalse(CollectionUtils.isEmpty(confList));
 		
-		HybridCacheConfiguration remoteConf = confList.get(1);
+		HybriCacheConfiguration remoteConf = confList.get(1);
 		assertEquals(cacheName, remoteConf.getCacheName());
 		
 		initRedis(remoteConf);

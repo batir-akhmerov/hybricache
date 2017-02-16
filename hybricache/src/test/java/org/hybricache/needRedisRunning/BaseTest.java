@@ -1,17 +1,16 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid;
+package org.hybricache.needRedisRunning;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Resource;
 
-import org.r3p.cache.hybrid.remote.RemoteValueWrapper;
+import org.hybricache.HybriCacheManager;
 import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
-import org.springframework.data.redis.core.ValueOperations;
 
 /**
  * The BaseTest class
@@ -22,7 +21,7 @@ import org.springframework.data.redis.core.ValueOperations;
 public class BaseTest {
 
 	@Resource 
-	protected HybridCacheManager cacheManager;
+	protected HybriCacheManager cacheManager;
 	
 	protected void test2Caches(String cacheName, String runtimeCacheName) {
 		Cache cache = this.cacheManager.getCache(cacheName);
@@ -32,26 +31,13 @@ public class BaseTest {
 			new String[]{"2", "Feb"},
 			new String[]{"3", "Mar"},
 		});
-		/*
-		cache.put("1", "Jan");
-		cache.put("2", "Feb");
-		cache.put("3", "Mar");
 		
-		
-		validateCacheValue(cache, "1", "Jan");
-		validateCacheValue(cache, "2", "Feb");
-		validateCacheValue(cache, "3", "Mar");
-*/	
 		assertTrue(getCacheValue(cache, "99") == null);
 		
 		testCacheValues(runtimeCacheName, new String[][]{
 			new String[]{"11", "Monday"}
 		});
-		/*
-		cache = this.cacheManager.getCache(runtimeCacheName);
-		cache.put("11", "Monday");
-		validateCacheValue(cache, "11", "Monday");
-		*/
+		
 	}
 	
 	protected void testCacheValues(String cacheName, String[][] val) {

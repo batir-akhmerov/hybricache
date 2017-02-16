@@ -1,26 +1,26 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.key;
+package org.hybricache.key;
 
 import java.io.Serializable;
 
 /**
- * The HybridKey class
+ * The HybriKey class
  *
  * @author Batir Akhmerov
  * Created on Feb 3, 2017
  */
-public class HybridKey implements Serializable {
+public class HybriKey implements Serializable {
 	public static final long UNDEFINED_KEY = 0;
 	public static final long UNDEFINED_TIME = 0;
 	
 	private long revision = UNDEFINED_KEY;
 	private long lastAccessedTime = UNDEFINED_TIME;
 	
-	public HybridKey() {
+	public HybriKey() {
 	}
-	public HybridKey(long revision) {
+	public HybriKey(long revision) {
 		this.revision = revision;
 		if (!isUndefined()) {
 			setAccessTime();

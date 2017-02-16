@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.dao;
+package org.hybricache.testDao;
 
 /**
  * The TestDao class

@@ -6,22 +6,12 @@
   <name>HybriCache</name>
   
   <properties>
-  	<spring.version>4.3.6.RELEASE</spring.version>
-  	
-  		<springdata.redis>1.8.0.RELEASE</springdata.redis>		
-  		<jackson>2.7.8</jackson>
-  		<apache.commons.pool2>2.4.2</apache.commons.pool2>
-  		
-  		<jta>1.1</jta>
-		<beanutils>1.9.2</beanutils>
-		<xstream>1.4.8</xstream>
-		<pool>2.2</pool>
-		
-		<jedis>2.9.0</jedis>
-		<srp>0.7</srp>
-		
-		<multithreadedtc>1.01</multithreadedtc>
-  		
+	<spring.version>4.3.6.RELEASE</spring.version>	
+	<springdata.redis>1.8.0.RELEASE</springdata.redis>		
+	<jackson>2.7.8</jackson>
+	<apache.commons.pool2>2.4.2</apache.commons.pool2> 		
+	<pool>2.2</pool>
+	<jedis>2.9.0</jedis>
   </properties>
   
   <build>
@@ -39,19 +29,12 @@
   </build>
   
   <dependencies>
-	 <dependency>
-		<groupId>net.sf.ehcache</groupId>
-		<artifactId>ehcache</artifactId>
-		<version>2.9.0</version>
+  	 <dependency>
+		<groupId>javax.inject</groupId>
+		<artifactId>javax.inject</artifactId>
+		<version>1</version>
 	</dependency>
-	
-	<!-- Optional, to log stuff -->
-	<dependency>
-		<groupId>ch.qos.logback</groupId>
-		<artifactId>logback-classic</artifactId>
-		<version>1.0.13</version>
-	</dependency>
-
+  
 	<!-- Spring caching framework inside this -->
 	<dependency>
 		<groupId>org.springframework</groupId>
@@ -66,125 +49,90 @@
 		<version>${spring.version}</version>
 	</dependency>
 	
+	<!--  Spring support for Redis -->
 	<dependency>
-         <groupId>org.springframework</groupId>
-         <artifactId>spring-test</artifactId>
-         <version>${spring.version}</version>
-         <scope>test</scope>
+		<groupId>org.springframework.data</groupId>
+		<artifactId>spring-data-redis</artifactId>
+		<version>${springdata.redis}</version>
+	</dependency>
+	
+	<!-- Testing -->
+	<dependency>
+	    <groupId>junit</groupId>
+	    <artifactId>junit</artifactId>
+	    <version>4.12</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-test</artifactId>
+		<version>${spring.version}</version>		
      </dependency>
      
      <dependency>
-	  <groupId>javax.inject</groupId>
-	  <artifactId>javax.inject</artifactId>
-	  <version>1</version>
+		<groupId>org.easymock</groupId>
+		<artifactId>easymock</artifactId>
+		<version>3.4</version>		
+	</dependency>
+	
+	<!-- Logger -->
+	<dependency>
+	    <groupId>org.slf4j</groupId>
+	    <artifactId>slf4j-api</artifactId>
+	    <version>1.7.22</version>
+	</dependency>	
+	<dependency>
+	    <groupId>org.slf4j</groupId>
+	    <artifactId>slf4j-simple</artifactId>
+	    <version>1.7.22</version>
+	</dependency>
+		
+		
+     
+    
+	
+	<!-- EhCache -->
+	<dependency>
+		<groupId>net.sf.ehcache</groupId>
+		<artifactId>ehcache</artifactId>
+		<version>2.9.0</version>
 	</dependency>
 	
 	
-	
-	
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-redis</artifactId>
-			<version>${springdata.redis}</version>
-		</dependency>
-<!-- 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-oxm</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-		</dependency>
- -->
-		<!-- REDIS Drivers -->
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>${jedis}</version>
-			<optional>true</optional>
-		</dependency>
+	<!--  Redis Driver -->	
+	<dependency>
+		<groupId>redis.clients</groupId>
+		<artifactId>jedis</artifactId>
+		<version>${jedis}</version>
+		<optional>true</optional>
+	</dependency>
 		
 	
 
-		<!--Mapper -->
-
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${jackson}</version>
-			<optional>true</optional>
-		</dependency>
-
-		<dependency>
-		    <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-databind</artifactId>
-		    <version>${jackson}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>${beanutils}</version>
-			<optional>true</optional>
-		</dependency>
- 
-		<!-- Pool -->
-
-		<dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-pool2</artifactId>
-		    <version>${apache.commons.pool2}</version>
-		</dependency>
-
-		<!-- CDI 
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<version>${cdi}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.el</groupId>
-			<artifactId>el-api</artifactId>
-			<version>${cdi}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.openwebbeans.test</groupId>
-			<artifactId>cditest-owb</artifactId>
-			<version>${webbeans}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>test</scope>
-		</dependency>
-	-->
+	<!-- JSON Jackson -->
 	<dependency>
-	  <groupId>org.easymock</groupId>
-	  <artifactId>easymock</artifactId>
-	  <version>3.4</version>
-	  <scope>test</scope>
+		<groupId>com.fasterxml.jackson.core</groupId>
+		<artifactId>jackson-core</artifactId>
+		<version>${jackson}</version>
+		<optional>true</optional>
 	</dependency>
+
+	<dependency>
+	    <groupId>com.fasterxml.jackson.core</groupId>
+	    <artifactId>jackson-databind</artifactId>
+	    <version>${jackson}</version>
+	</dependency>
+
+	
+	<!-- Pool -->
+	<dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-pool2</artifactId>
+	    <version>${apache.commons.pool2}</version>
+	</dependency>
+		
+		
   </dependencies>
   
-  <description>HybriCache is a hybrid cache solution based on EhCache and Redis. HybriCache is almost as fast as EhCache and Redis utilization makes HybriCache Cluster Environment friendly.</description>
+  <description>HybriCache is a hybri cache solution based on EhCache and Redis. HybriCache is almost as fast as EhCache and Redis utilization makes HybriCache a Cluster Environment friendly.</description>
 </project>

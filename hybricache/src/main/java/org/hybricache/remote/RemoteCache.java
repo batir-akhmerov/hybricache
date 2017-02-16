@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.remote;
+package org.hybricache.remote;
 
 import org.springframework.cache.Cache;
 

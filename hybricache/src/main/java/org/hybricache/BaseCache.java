@@ -1,12 +1,12 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid;
+package org.hybricache;
 
-import org.r3p.cache.hybrid.HybridCacheConfiguration.CacheType;
-import org.r3p.cache.hybrid.key.HybridKeyCache;
-import org.r3p.cache.hybrid.remote.RemoteCache;
-import org.r3p.cache.hybrid.remote.RemoteCacheFactory;
+import org.hybricache.HybriCacheConfiguration.CacheType;
+import org.hybricache.key.HybriKeyCache;
+import org.hybricache.remote.RemoteCache;
+import org.hybricache.remote.RemoteCacheFactory;
 import org.springframework.cache.ehcache.EhCacheCache;
 
 import net.sf.ehcache.Ehcache;
@@ -20,50 +20,49 @@ import net.sf.ehcache.Ehcache;
 public class BaseCache {
 	
 	protected EhCacheCache ehCache;
-	protected HybridCacheConfiguration hybridCacheConfig;
+	protected HybriCacheConfiguration hybriCacheConfig;
 	@SuppressWarnings("rawtypes")
 	protected RemoteCache remoteCache;
 	
-	private HybridKeyCache hybridKeyCache;
+	private HybriKeyCache hybriKeyCache;
 	
 	
-	public BaseCache(Ehcache ehCacheNative, HybridCacheConfiguration hybridCacheConfig, RemoteCacheFactory remoteCacheFactory) {
-		this(new EhCacheCache(ehCacheNative), hybridCacheConfig, remoteCacheFactory.getInstance(hybridCacheConfig));
+	public BaseCache(Ehcache ehCacheNative, HybriCacheConfiguration hybriCacheConfig, RemoteCacheFactory remoteCacheFactory) {
+		this(new EhCacheCache(ehCacheNative), hybriCacheConfig, remoteCacheFactory.getInstance(hybriCacheConfig));
 	}
 	
-	public BaseCache(EhCacheCache ehCache, HybridCacheConfiguration hybridCacheConfig, RemoteCacheFactory remoteCacheFactory) {
-		this(ehCache, hybridCacheConfig, remoteCacheFactory.getInstance(hybridCacheConfig));
+	public BaseCache(EhCacheCache ehCache, HybriCacheConfiguration hybriCacheConfig, RemoteCacheFactory remoteCacheFactory) {
+		this(ehCache, hybriCacheConfig, remoteCacheFactory.getInstance(hybriCacheConfig));
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public BaseCache(EhCacheCache ehCache, HybridCacheConfiguration hybridCacheConfig, RemoteCache remoteCache) {
+	public BaseCache(EhCacheCache ehCache, HybriCacheConfiguration hybriCacheConfig, RemoteCache remoteCache) {
 		this.ehCache = ehCache;
-		this.hybridCacheConfig = hybridCacheConfig;
+		this.hybriCacheConfig = hybriCacheConfig;
 		this.remoteCache = remoteCache;		
 	}
 
 	
-	
 
 	public boolean isCacheRemote() {
-		return this.hybridCacheConfig.getCacheType() == CacheType.REMOTE;
+		return this.hybriCacheConfig.getCacheType() == CacheType.REMOTE;
 	}
 	public boolean isCacheHybrid() {
-		return this.hybridCacheConfig.getCacheType() == CacheType.HYBRID;
+		return this.hybriCacheConfig.getCacheType() == CacheType.HYBRID;
 	}
 	public boolean isCacheLocal() {
-		return this.hybridCacheConfig.getCacheType() == CacheType.LOCAL;
+		return this.hybriCacheConfig.getCacheType() == CacheType.LOCAL;
 	}
 	
 	
 	
-	public HybridCacheConfiguration getHybridCacheConfig() {
-		return this.hybridCacheConfig;
+	public HybriCacheConfiguration getHybriCacheConfig() {
+		return this.hybriCacheConfig;
 	}
 
 	
-	public void setHybridCacheConfig(HybridCacheConfiguration hybridCacheConfig) {
-		this.hybridCacheConfig = hybridCacheConfig;
+	public void setHybriCacheConfig(HybriCacheConfiguration hybriCacheConfig) {
+		this.hybriCacheConfig = hybriCacheConfig;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -85,13 +84,13 @@ public class BaseCache {
 	}
 
 
-	public HybridKeyCache getHybridKeyCache() {
-		return this.hybridKeyCache;
+	public HybriKeyCache getHybriKeyCache() {
+		return this.hybriKeyCache;
 	}
 
 
-	public void setHybridKeyCache(HybridKeyCache hybridKeyCache) {
-		this.hybridKeyCache = hybridKeyCache;
+	public void setHybriKeyCache(HybriKeyCache hybriKeyCache) {
+		this.hybriKeyCache = hybriKeyCache;
 	}
 
 	

@@ -1,12 +1,12 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.remote.redis;
+package org.hybricache.remote.redis;
 
 import static org.junit.Assert.assertFalse;
 
-import org.r3p.cache.hybrid.HybridCacheConfiguration;
-import org.r3p.cache.hybrid.remote.RemoteValueWrapper;
+import org.hybricache.HybriCacheConfiguration;
+import org.hybricache.remote.RemoteValueWrapper;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.util.StringUtils;
 
@@ -20,10 +20,10 @@ public class RedisRemoteHashCache<K, V> extends AbstractRedisRemoteCache<HashOpe
 	
 	private String hashCacheName;
 	
-	public RedisRemoteHashCache(HybridCacheConfiguration conf) {
+	public RedisRemoteHashCache(HybriCacheConfiguration conf) {
 		super(conf);
-		assertFalse(StringUtils.isEmpty(conf.getHashCacheName()));
-		this.hashCacheName = conf.getHashCacheName();
+		assertFalse(StringUtils.isEmpty(conf.getCacheName()));
+		this.hashCacheName = conf.getCacheName();
 	}
 	
 	public HashOperations<K, K, RemoteValueWrapper<V>> getCacheTarget() {
@@ -34,6 +34,9 @@ public class RedisRemoteHashCache<K, V> extends AbstractRedisRemoteCache<HashOpe
 	@SuppressWarnings("unchecked")
 	public <T> T get(Object key, Class<T> clazz) {
 		RemoteValueWrapper<V> wrapper = (RemoteValueWrapper<V>) getCacheTarget().get(getHashCacheName(), key); 
+		if (wrapper == null) {
+			return null;
+		}
 		return (T) wrapper.get();
 	}
 

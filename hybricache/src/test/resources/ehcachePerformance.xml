@@ -6,7 +6,7 @@
 
 	<diskStore path="java.io.tmpdir" />
 
-	<cache name="localCache"
+	<cache name="ehCache"
 		maxEntriesLocalHeap="10000"
 		maxEntriesLocalDisk="1000"
 		eternal="false"

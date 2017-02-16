@@ -1,62 +1,62 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.key;
+package org.hybricache.key;
 
 import java.util.concurrent.Callable;
 
-import org.r3p.cache.hybrid.BaseCache;
-import org.r3p.cache.hybrid.HybridCacheConfiguration;
-import org.r3p.cache.hybrid.remote.RemoteCacheFactory;
+import org.hybricache.BaseCache;
+import org.hybricache.HybriCacheConfiguration;
+import org.hybricache.remote.RemoteCacheFactory;
 import org.springframework.cache.Cache;
 
 import net.sf.ehcache.Ehcache;
 
 /**
- * The HybridKeyCache class
+ * The HybriKeyCache class
  *
  * @author Batir Akhmerov
  * Created on Jan 27, 2017
  */
-public class HybridKeyCache extends BaseCache implements Cache {
+public class HybriKeyCache extends BaseCache implements Cache {
 	
 	protected int keyTrustPeriod;
 	
 		
-	public HybridKeyCache(Ehcache ehCacheNative, HybridCacheConfiguration hybridCacheConfig, RemoteCacheFactory remoteCacheFactory) {
-		super(ehCacheNative, hybridCacheConfig, remoteCacheFactory);
-		this.keyTrustPeriod = getHybridCacheConfig().getKeyTrustPeriod();
+	public HybriKeyCache(Ehcache ehCacheNative, HybriCacheConfiguration hybriCacheConfig, RemoteCacheFactory remoteCacheFactory) {
+		super(ehCacheNative, hybriCacheConfig, remoteCacheFactory);
+		this.keyTrustPeriod = getHybriCacheConfig().getKeyTrustPeriod();
 	}
 		
-	public void removeBothHybridKeys(Object key){
+	public void removeBothHybriKeys(Object key){
 		getEhCache().evict(key);
 		getRemoteCache().evict(key);
 	}
 	
-	public HybridKey getKeyRemote(Object key) {
-		HybridKey hybridKey = getRemoteCache().get(key, HybridKey.class);
-		if (hybridKey == null) {
-			hybridKey = new HybridKey();
+	public HybriKey getKeyRemote(Object key) {
+		HybriKey hybriKey = getRemoteCache().get(key, HybriKey.class);
+		if (hybriKey == null) {
+			hybriKey = new HybriKey();
 		}
-		return hybridKey;
+		return hybriKey;
 	}
-	public void putKeyRemote(Object key, HybridKey hybridKey) {
-		getRemoteCache().put(key, hybridKey);
+	public void putKeyRemote(Object key, HybriKey hybriKey) {
+		getRemoteCache().put(key, hybriKey);
 	}
 	
-	public HybridKey getKeyLocal(Object key) {
-		HybridKey hybridKey = getEhCache().get(key, HybridKey.class);
-		if (hybridKey == null) {
-			hybridKey = new HybridKey();
+	public HybriKey getKeyLocal(Object key) {
+		HybriKey hybriKey = getEhCache().get(key, HybriKey.class);
+		if (hybriKey == null) {
+			hybriKey = new HybriKey();
 		}
-		return hybridKey;
+		return hybriKey;
 	}
-	public void putKeyLocal(Object key, HybridKey hybridKey) {
-		getEhCache().put(key, hybridKey);
+	public void putKeyLocal(Object key, HybriKey hybriKey) {
+		getEhCache().put(key, hybriKey);
 	}
 	
 	
-	public boolean isKeyRecent(HybridKey keyLocal) {
+	public boolean isKeyRecent(HybriKey keyLocal) {
 		long currentTime = System.currentTimeMillis();
 		boolean isRecent = keyLocal != null && !keyLocal.isUndefined() 
 				&& (currentTime - keyLocal.getLastAccessedTime()) < this.keyTrustPeriod;
@@ -64,7 +64,7 @@ public class HybridKeyCache extends BaseCache implements Cache {
 		System.out.println("TIME DIFF: " + (currentTime - keyLocal.getLastAccessedTime()));
 		return isRecent;
 	}
-	public boolean isKeyValid(HybridKey keyLocal, HybridKey keyRemote) {
+	public boolean isKeyValid(HybriKey keyLocal, HybriKey keyRemote) {
 		return keyLocal != null && keyRemote != null
 				&& !keyLocal.isUndefined() && !keyRemote.isUndefined()
 				&& keyLocal.getRevision() == keyRemote.getRevision();

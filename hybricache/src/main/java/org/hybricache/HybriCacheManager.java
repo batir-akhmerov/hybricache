@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid;
+package org.hybricache;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -13,11 +13,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.r3p.cache.hybrid.HybridCacheConfiguration.CacheMode;
-import org.r3p.cache.hybrid.HybridCacheConfiguration.CacheType;
-import org.r3p.cache.hybrid.key.HybridKeyCache;
-import org.r3p.cache.hybrid.remote.RemoteCacheFactory;
-import org.r3p.cache.hybrid.remote.redis.RedisRemoteCacheFactory;
+import org.hybricache.HybriCacheConfiguration.CacheMode;
+import org.hybricache.HybriCacheConfiguration.CacheType;
+import org.hybricache.key.HybriKeyCache;
+import org.hybricache.remote.RemoteCacheFactory;
+import org.hybricache.remote.redis.RedisRemoteCacheFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.transaction.AbstractTransactionSupportingCacheManager;
@@ -33,12 +33,12 @@ import net.sf.ehcache.config.PersistenceConfiguration.Strategy;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 
 /**
- * The HybridCacheManager class
+ * The HybriCacheManager class
  *
  * @author Batir Akhmerov
  * Created on Jan 26, 2017
  */
-public class HybridCacheManager extends AbstractTransactionSupportingCacheManager {
+public class HybriCacheManager extends AbstractTransactionSupportingCacheManager {
 
 	public static final CacheConfiguration DEF_EHCACHE_CONFIG =  new CacheConfiguration("defaultEhCache", 0)
 			.memoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.LFU)
@@ -48,17 +48,17 @@ public class HybridCacheManager extends AbstractTransactionSupportingCacheManage
 			.diskExpiryThreadIntervalSeconds(0)
 			.persistence(new PersistenceConfiguration().strategy(Strategy.LOCALTEMPSWAP));
 	
-	public static final HybridCacheConfiguration DEF_HYBRID_CACHE_CONFIG = new HybridCacheConfiguration("defaultEhCache", CacheType.HYBRID, 1000);
+	public static final HybriCacheConfiguration DEF_HYBRID_CACHE_CONFIG = new HybriCacheConfiguration("defaultEhCache", CacheType.HYBRID, 1000);
 	
 	public static final RemoteCacheFactory DEF_REMOTE_CACHE_FACTORY = new RedisRemoteCacheFactory();
 	
-	public static final String CACHE_KEY = "hybridKey";
-	public static final String CACHE_COMMON = "hybridCommon";
+	public static final String CACHE_KEY = "hybriKey";
+	public static final String CACHE_COMMON = "hybriCommon";
 	
 	protected Map<String, Cache> caches = new HashMap<>();
 	
-	protected HybridCacheConfiguration defaultHybridCacheConfiguration;
-	protected List<HybridCacheConfiguration> hybridCacheConfigurationList;
+	protected HybriCacheConfiguration defaultHybriCacheConfiguration;
+	protected List<HybriCacheConfiguration> hybriCacheConfigurationList;
 	protected RemoteCacheFactory remoteCacheFactory;
 	
 	protected EhCacheCacheManager  localCacheManager;
@@ -76,7 +76,7 @@ public class HybridCacheManager extends AbstractTransactionSupportingCacheManage
 	}
 	
 	
-	public HybridCacheManager(EhCacheCacheManager  localCacheManager, String remoteSeverHost, Integer remoteServerPort) {
+	public HybriCacheManager(EhCacheCacheManager  localCacheManager, String remoteSeverHost, Integer remoteServerPort) {
 		this.localCacheManager = localCacheManager;
 		this.remoteSeverHost = remoteSeverHost;
 		this.remoteServerPort = remoteServerPort;
@@ -97,37 +97,37 @@ public class HybridCacheManager extends AbstractTransactionSupportingCacheManage
 		
 		resetRemoteDatabaseSize();
 		
-		HybridCacheConfiguration systemHybridCacheConfig = new HybridCacheConfiguration(null, CacheType.HYBRID, 1000);
-		systemHybridCacheConfig.setDatabaseIndex(getNextRemoteDatabaseIndex());
-		setRemoteServer(systemHybridCacheConfig);
-		registerEhCache(CACHE_KEY, systemHybridCacheConfig, null);
+		HybriCacheConfiguration systemHybriCacheConfig = new HybriCacheConfiguration(null, CacheType.HYBRID, 1000);
+		systemHybriCacheConfig.setDatabaseIndex(getNextRemoteDatabaseIndex());
+		setRemoteServer(systemHybriCacheConfig);
+		registerEhCache(CACHE_KEY, systemHybriCacheConfig, null);
 		
-		systemHybridCacheConfig.setDatabaseIndex(getNextRemoteDatabaseIndex());
-		registerEhCache(CACHE_COMMON, systemHybridCacheConfig, null);
+		systemHybriCacheConfig.setDatabaseIndex(getNextRemoteDatabaseIndex());
+		registerEhCache(CACHE_COMMON, systemHybriCacheConfig, null);
 		
 		String[] names = this.localCacheManager.getCacheManager().getCacheNames();
 		Collection<Cache> cacheSet = new LinkedHashSet<>(names.length);
 		for (String cacheName : names) {
 			Ehcache ehcache = this.localCacheManager.getCacheManager().getEhcache(cacheName);
-			HybridCacheConfiguration hybridCacheConfig = findOrAddHybridCacheConfig(cacheName, ehcache.getCacheConfiguration());
+			HybriCacheConfiguration hybriCacheConfig = findOrAddHybriCacheConfig(cacheName, ehcache.getCacheConfiguration());
 			
-			HybridCache hybridCache = new HybridCache(ehcache, hybridCacheConfig, getRemoteCacheFactory(), createHybridKeyCacheIfNeeded(hybridCacheConfig));
-			this.caches.put(cacheName, hybridCache);
-			cacheSet.add(hybridCache);
+			HybriCache hybriCache = new HybriCache(ehcache, hybriCacheConfig, getRemoteCacheFactory(), createHybriKeyCacheIfNeeded(hybriCacheConfig));
+			this.caches.put(cacheName, hybriCache);
+			cacheSet.add(hybriCache);
 		}
 		
-		// load caches declared in hybridCacheConfigurationList but missing in ehcache.xml
-		for (HybridCacheConfiguration hybridCacheConfig: this.hybridCacheConfigurationList) {
-			String cacheName = hybridCacheConfig.getCacheName();
-			if (this.caches.containsKey(hybridCacheConfig.getCacheName())) {
+		// load caches declared in hybriCacheConfigurationList but missing in ehcache.xml
+		for (HybriCacheConfiguration hybriCacheConfig: this.hybriCacheConfigurationList) {
+			String cacheName = hybriCacheConfig.getCacheName();
+			if (this.caches.containsKey(hybriCacheConfig.getCacheName())) {
 				continue;
 			}
-			setRemoteServer(hybridCacheConfig);
-			hybridCacheConfig = registerEhCache(cacheName, hybridCacheConfig, null);
+			setRemoteServer(hybriCacheConfig);
+			hybriCacheConfig = registerEhCache(cacheName, hybriCacheConfig, null);
 			Ehcache ehcache = this.localCacheManager.getCacheManager().getEhcache(cacheName);
-			HybridCache hybridCache = new HybridCache(ehcache, hybridCacheConfig, getRemoteCacheFactory(), createHybridKeyCacheIfNeeded(hybridCacheConfig));
-			this.caches.put(cacheName, hybridCache);
-			cacheSet.add(hybridCache);
+			HybriCache hybriCache = new HybriCache(ehcache, hybriCacheConfig, getRemoteCacheFactory(), createHybriKeyCacheIfNeeded(hybriCacheConfig));
+			this.caches.put(cacheName, hybriCache);
+			cacheSet.add(hybriCache);
 			
 		}
 		return cacheSet;
@@ -135,58 +135,59 @@ public class HybridCacheManager extends AbstractTransactionSupportingCacheManage
 	
 	@Override
 	protected Cache getMissingCache(String name) {
-		return createHybridCache_Common(name);
+		return createHybriCache_Common(name);
 	}
 	
-	protected HybridKeyCache createHybridCache_Key(String cacheName) {
-		return (HybridKeyCache) createHybridCache(CACHE_KEY + "_" + cacheName, CACHE_KEY, true, true);
+	protected HybriKeyCache createHybriCache_Key(String cacheName) {
+		return (HybriKeyCache) createHybriCache(CACHE_KEY + "_" + cacheName, CACHE_KEY, true, true);
 	}
 
-	protected Cache createHybridCache_Common(String cacheName) {
-		return createHybridCache(cacheName, CACHE_COMMON, true, false);
+	protected Cache createHybriCache_Common(String cacheName) {
+		return createHybriCache(cacheName, CACHE_COMMON, true, false);
 	}
 	
-	protected Cache createHybridCache(String cacheName, String parentCacheName, boolean tryToCreate, boolean isKeyCache) {
+	protected Cache createHybriCache(String cacheName, String parentCacheName, boolean tryToCreate, boolean isKeyCache) {
 		// Check the EhCache cache again (in case the cache was added at runtime)
 		CacheManager ehCacheManager =  this.localCacheManager.getCacheManager(); 		
 		Ehcache ehcache = ehCacheManager.getEhcache(cacheName);
 		if (ehcache != null) {
-			HybridCacheConfiguration hybridConfig = findConfigByName(cacheName);
-			Cache hybridCache = null;
+			HybriCacheConfiguration hybriConfig = findConfigByName(cacheName);
+			Cache hybriCache = null;
 			if (isKeyCache) {
-				hybridCache = new HybridKeyCache(ehcache, hybridConfig, getRemoteCacheFactory());
+				hybriCache = new HybriKeyCache(ehcache, hybriConfig, getRemoteCacheFactory());
 			}
 			else {
-				hybridCache = new HybridCache(ehcache, hybridConfig, getRemoteCacheFactory(), createHybridKeyCacheIfNeeded(hybridConfig));
+				hybriCache = new HybriCache(ehcache, hybriConfig, getRemoteCacheFactory(), createHybriKeyCacheIfNeeded(hybriConfig));
 			}
-			this.caches.put(cacheName, hybridCache);
-			return hybridCache;
+			this.caches.put(cacheName, hybriCache);
+			return hybriCache;
 		}
 		else if (!tryToCreate) {
 			throw new IllegalStateException(String.format("Cannot find nor create missing cache [{%s}]!", cacheName));
 		}
 		
 		// register a new ehCache
-		HybridCacheConfiguration commonHybridCacheConfig = findConfigByName(parentCacheName);		
-		HybridCacheConfiguration hashHybridCacheConfig = commonHybridCacheConfig.clone();
+		HybriCacheConfiguration commonHybriCacheConfig = findConfigByName(parentCacheName);		
+		HybriCacheConfiguration hashHybriCacheConfig = commonHybriCacheConfig.clone();
 		// its remote config is going to have same CACHE_COMMON's databaseIndex but will act as hashCache with hashKey (CACHE_COMMON + "_" + cacheName)
-		hashHybridCacheConfig.setCacheMode(CacheMode.HASH);
-		hashHybridCacheConfig.setCacheName(cacheName);
-		hashHybridCacheConfig.setHashCacheName(parentCacheName + "_" + cacheName);
+		hashHybriCacheConfig.setCacheMode(CacheMode.HASH);
+		hashHybriCacheConfig.setCacheName(cacheName);
+		//hashHybriCacheConfig.setHashCacheName(parentCacheName + "_" + cacheName);
 		
-		registerEhCache(cacheName, hashHybridCacheConfig, null);
+		registerEhCache(cacheName, hashHybriCacheConfig, null);
 		
-		return createHybridCache(cacheName, parentCacheName, false, isKeyCache);
+		return createHybriCache(cacheName, parentCacheName, false, isKeyCache);
 	}
 	
-	protected HybridKeyCache createHybridKeyCacheIfNeeded(HybridCacheConfiguration hybridConfig){
-		if (hybridConfig.getCacheType() != CacheType.HYBRID) {
+	protected HybriKeyCache createHybriKeyCacheIfNeeded(HybriCacheConfiguration hybriConfig){
+		String cacheName = hybriConfig.getCacheName();
+		if (hybriConfig.getCacheType() != CacheType.HYBRID || CACHE_KEY.equals(cacheName) || CACHE_COMMON.equals(cacheName)) {
 			return null;
 		}
-		return createHybridCache_Key(hybridConfig.getCacheName());
+		return createHybriCache_Key(hybriConfig.getCacheName());
 	}
 	
-	protected HybridCacheConfiguration registerEhCache(String cacheName, HybridCacheConfiguration newHybridCacheConfig, net.sf.ehcache.config.CacheConfiguration ehCacheConfig) {		
+	protected HybriCacheConfiguration registerEhCache(String cacheName, HybriCacheConfiguration newHybriCacheConfig, net.sf.ehcache.config.CacheConfiguration ehCacheConfig) {		
 		CacheManager ehCacheManager =  this.localCacheManager.getCacheManager();
 		
 		// create ehCache cache
@@ -199,63 +200,63 @@ public class HybridCacheManager extends AbstractTransactionSupportingCacheManage
 		
 		ehCacheManager.addCache(cache);
 		
-		if (newHybridCacheConfig != null) {
-			return addHybridCacheConfig(cacheName, newHybridCacheConfig, ehCacheConfig);
+		if (newHybriCacheConfig != null) {
+			return addHybriCacheConfig(cacheName, newHybriCacheConfig, ehCacheConfig);
 		}
 		
-		return findOrAddHybridCacheConfig(cacheName, ehCacheConfig);
+		return findOrAddHybriCacheConfig(cacheName, ehCacheConfig);
 	}
 	
-	protected HybridCacheConfiguration addHybridCacheConfig(String cacheName, HybridCacheConfiguration hybridCacheConfig, net.sf.ehcache.config.CacheConfiguration ehCacheConfig) {
-		assertNotNull(hybridCacheConfig);
+	protected HybriCacheConfiguration addHybriCacheConfig(String cacheName, HybriCacheConfiguration hybriCacheConfig, net.sf.ehcache.config.CacheConfiguration ehCacheConfig) {
+		assertNotNull(hybriCacheConfig);
 		//assertNull(findConfigByName(cacheName));
 		
-		hybridCacheConfig = hybridCacheConfig.clone();
-		hybridCacheConfig.setCacheName(cacheName);
+		hybriCacheConfig = hybriCacheConfig.clone();
+		hybriCacheConfig.setCacheName(cacheName);
 		if (ehCacheConfig != null) {
-			hybridCacheConfig.setEhCacheConfiguration(ehCacheConfig);
+			hybriCacheConfig.setEhCacheConfiguration(ehCacheConfig);
 		}
 		
 		int existingConfigIndex = findConfigIndex(cacheName);
 		if (existingConfigIndex == -1) {
-			getCacheConfigListSafely().add(hybridCacheConfig);
+			getCacheConfigListSafely().add(hybriCacheConfig);
 		}
 		else {
-			getCacheConfigListSafely().set(existingConfigIndex, hybridCacheConfig);
+			getCacheConfigListSafely().set(existingConfigIndex, hybriCacheConfig);
 		}
 		
-		return hybridCacheConfig;
+		return hybriCacheConfig;
 	}
 		
 		
 	
-	protected HybridCacheConfiguration findOrAddHybridCacheConfig(String cacheName, net.sf.ehcache.config.CacheConfiguration ehCacheConfig) {
-		HybridCacheConfiguration hybridCacheConfig = findConfigByName(cacheName);
-		if (hybridCacheConfig == null) {
-			hybridCacheConfig = DEF_HYBRID_CACHE_CONFIG.clone();
-			hybridCacheConfig.setCacheName(cacheName);
-			hybridCacheConfig.setDatabaseIndex(getNextRemoteDatabaseIndex());
-			getCacheConfigListSafely().add(hybridCacheConfig);		
+	protected HybriCacheConfiguration findOrAddHybriCacheConfig(String cacheName, net.sf.ehcache.config.CacheConfiguration ehCacheConfig) {
+		HybriCacheConfiguration hybriCacheConfig = findConfigByName(cacheName);
+		if (hybriCacheConfig == null) {
+			hybriCacheConfig = DEF_HYBRID_CACHE_CONFIG.clone();
+			hybriCacheConfig.setCacheName(cacheName);
+			hybriCacheConfig.setDatabaseIndex(getNextRemoteDatabaseIndex());
+			getCacheConfigListSafely().add(hybriCacheConfig);		
 		}
 		
 		if (ehCacheConfig != null) {
-			hybridCacheConfig.setEhCacheConfiguration(ehCacheConfig);
+			hybriCacheConfig.setEhCacheConfiguration(ehCacheConfig);
 		}
 		
-		setRemoteServer(hybridCacheConfig);
+		setRemoteServer(hybriCacheConfig);
 		
-		return hybridCacheConfig;
+		return hybriCacheConfig;
 	}
 	
-	protected void setRemoteServer(HybridCacheConfiguration conf) {
+	protected void setRemoteServer(HybriCacheConfiguration conf) {
 		conf.setRemoteSeverHost(getRemoteSeverHost());
 		conf.setRemoteServerPort(getRemoteServerPort());
 	}
 	
-	protected HybridCacheConfiguration findConfigByName(String cacheName) {
+	protected HybriCacheConfiguration findConfigByName(String cacheName) {
 		assertFalse("CacheName cannot be blank!", StringUtils.isEmpty(cacheName));
-		List<HybridCacheConfiguration> list = getCacheConfigListSafely();
-		for (HybridCacheConfiguration config: list) {
+		List<HybriCacheConfiguration> list = getCacheConfigListSafely();
+		for (HybriCacheConfiguration config: list) {
 			if (cacheName.equals(config.getCacheName())) {
 				return config;
 			}
@@ -265,9 +266,9 @@ public class HybridCacheManager extends AbstractTransactionSupportingCacheManage
 	
 	protected int findConfigIndex(String cacheName) {
 		assertFalse("CacheName cannot be blank!", StringUtils.isEmpty(cacheName));
-		List<HybridCacheConfiguration> list = getCacheConfigListSafely();
+		List<HybriCacheConfiguration> list = getCacheConfigListSafely();
 		for (int i = 0, size = list.size(); i < size; i++) {
-			HybridCacheConfiguration config = list.get(i);
+			HybriCacheConfiguration config = list.get(i);
 			if (cacheName.equals(config.getCacheName())) {
 				return i;
 			}
@@ -275,16 +276,16 @@ public class HybridCacheManager extends AbstractTransactionSupportingCacheManage
 		return -1;
 	}
 	
-	protected List<HybridCacheConfiguration> getCacheConfigListSafely(){
-		if (this.hybridCacheConfigurationList == null) {
-			this.hybridCacheConfigurationList = new ArrayList<>();
+	protected List<HybriCacheConfiguration> getCacheConfigListSafely(){
+		if (this.hybriCacheConfigurationList == null) {
+			this.hybriCacheConfigurationList = new ArrayList<>();
 		}
-		return this.hybridCacheConfigurationList;
+		return this.hybriCacheConfigurationList;
 	}
 	
 	protected net.sf.ehcache.config.CacheConfiguration getDefaultEhCacheConfig() {
-		if (this.defaultHybridCacheConfiguration != null && this.defaultHybridCacheConfiguration.getEhCacheConfiguration() != null) {
-			return this.defaultHybridCacheConfiguration.getEhCacheConfiguration();
+		if (this.defaultHybriCacheConfiguration != null && this.defaultHybriCacheConfiguration.getEhCacheConfiguration() != null) {
+			return this.defaultHybriCacheConfiguration.getEhCacheConfiguration();
 		}
 		return DEF_EHCACHE_CONFIG;
 	}
@@ -333,34 +334,34 @@ public class HybridCacheManager extends AbstractTransactionSupportingCacheManage
 
 	/**
 	 *
-	 * @return the defaultHybridCacheConfiguration
+	 * @return the defaultHybriCacheConfiguration
 	 */
-	public HybridCacheConfiguration getDefaultHybridCacheConfiguration() {
-		return this.defaultHybridCacheConfiguration;
+	public HybriCacheConfiguration getDefaultHybriCacheConfiguration() {
+		return this.defaultHybriCacheConfiguration;
 	}
 
 	/**
 	 *
-	 * @param defaultHybridCacheConfiguration the defaultHybridCacheConfiguration to set
+	 * @param defaultHybriCacheConfiguration the defaultHybriCacheConfiguration to set
 	 */
-	public void setDefaultHybridCacheConfiguration(HybridCacheConfiguration defaultHybridCacheConfiguration) {
-		this.defaultHybridCacheConfiguration = defaultHybridCacheConfiguration;
+	public void setDefaultHybriCacheConfiguration(HybriCacheConfiguration defaultHybriCacheConfiguration) {
+		this.defaultHybriCacheConfiguration = defaultHybriCacheConfiguration;
 	}
 
 	/**
 	 *
-	 * @return the hybridCacheConfigurationList
+	 * @return the hybriCacheConfigurationList
 	 */
-	public List<HybridCacheConfiguration> getHybridCacheConfigurationList() {
-		return this.hybridCacheConfigurationList;
+	public List<HybriCacheConfiguration> getHybriCacheConfigurationList() {
+		return this.hybriCacheConfigurationList;
 	}
 
 	/**
 	 *
-	 * @param hybridCacheConfigurationList the hybridCacheConfigurationList to set
+	 * @param hybriCacheConfigurationList the hybriCacheConfigurationList to set
 	 */
-	public void setHybridCacheConfigurationList(List<HybridCacheConfiguration> hybridCacheConfigurationList) {
-		this.hybridCacheConfigurationList = hybridCacheConfigurationList;
+	public void setHybriCacheConfigurationList(List<HybriCacheConfiguration> hybriCacheConfigurationList) {
+		this.hybriCacheConfigurationList = hybriCacheConfigurationList;
 	}
 
 	/**

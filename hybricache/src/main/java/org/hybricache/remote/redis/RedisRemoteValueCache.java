@@ -1,10 +1,10 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.remote.redis;
+package org.hybricache.remote.redis;
 
-import org.r3p.cache.hybrid.HybridCacheConfiguration;
-import org.r3p.cache.hybrid.remote.RemoteValueWrapper;
+import org.hybricache.HybriCacheConfiguration;
+import org.hybricache.remote.RemoteValueWrapper;
 import org.springframework.data.redis.core.ValueOperations;
 
 /**
@@ -15,7 +15,7 @@ import org.springframework.data.redis.core.ValueOperations;
  */
 public class RedisRemoteValueCache<K, V> extends AbstractRedisRemoteCache<ValueOperations<K, RemoteValueWrapper<V>>, K, V>  {
 	
-	public RedisRemoteValueCache(HybridCacheConfiguration conf) {
+	public RedisRemoteValueCache(HybriCacheConfiguration conf) {
 		super(conf);
 	}
 	

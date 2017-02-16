@@ -1,17 +1,17 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.local;
+package org.hybricache.needRedisRunning.ehCacheTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.util.List;
 
+import org.hybricache.HybriCacheConfiguration;
+import org.hybricache.needRedisRunning.BaseTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.r3p.cache.hybrid.BaseTest;
-import org.r3p.cache.hybrid.HybridCacheConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -30,12 +30,12 @@ public class LocalCachePerformaceTest1 extends BaseTest {
 	
 	@Test
 	public void test() {
-		String cacheName = "appCache";
+		String cacheName = "ehCache";
 		
-		List<HybridCacheConfiguration> confList = this.cacheManager.getHybridCacheConfigurationList();
+		List<HybriCacheConfiguration> confList = this.cacheManager.getHybriCacheConfigurationList();
 		assertFalse(CollectionUtils.isEmpty(confList));
 		
-		HybridCacheConfiguration remoteConf = confList.get(0);
+		HybriCacheConfiguration remoteConf = confList.get(0);
 		assertEquals(cacheName, remoteConf.getCacheName());
 		
 		String key = "1";

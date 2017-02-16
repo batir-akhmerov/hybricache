@@ -1,12 +1,12 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.remote.redis;
+package org.hybricache.remote.redis;
 
-import org.r3p.cache.hybrid.HybridCacheConfiguration;
-import org.r3p.cache.hybrid.HybridCacheConfiguration.CacheMode;
-import org.r3p.cache.hybrid.remote.RemoteCache;
-import org.r3p.cache.hybrid.remote.RemoteCacheFactory;
+import org.hybricache.HybriCacheConfiguration;
+import org.hybricache.HybriCacheConfiguration.CacheMode;
+import org.hybricache.remote.RemoteCache;
+import org.hybricache.remote.RemoteCacheFactory;
 
 /**
  * The RedisRemoteCacheFactory class
@@ -18,7 +18,7 @@ public class RedisRemoteCacheFactory implements RemoteCacheFactory {
 
 	@Override
 	@SuppressWarnings("rawtypes")
-	public RemoteCache getInstance(HybridCacheConfiguration conf) {
+	public RemoteCache getInstance(HybriCacheConfiguration conf) {
 		RemoteCache remoteCache = null;
 		if (conf.getCacheMode() == CacheMode.HASH) {
 			remoteCache = new RedisRemoteHashCache(conf);

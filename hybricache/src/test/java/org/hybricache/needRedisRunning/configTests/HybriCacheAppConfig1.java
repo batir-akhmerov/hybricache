@@ -1,9 +1,9 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.config;
+package org.hybricache.needRedisRunning.configTests;
 
-import org.r3p.cache.hybrid.TestAppConfig;
+import org.hybricache.needRedisRunning.ehCacheTests.TestAppConfig;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,7 +13,7 @@ import org.springframework.core.io.ClassPathResource;
 
 
 /**
- * The HybridCacheAppConfig1 class
+ * The HybriCacheAppConfig1 class
  *
  * @author Batir Akhmerov
  * Created on Jan 26, 2017
@@ -21,7 +21,7 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 @ComponentScan({ "org.r3p.cache.*" })
 @PropertySource("classpath:application.properties")
-public class HybridCacheAppConfig1 extends TestAppConfig {
+public class HybriCacheAppConfig1 extends TestAppConfig {
 
 	@Bean
 	public EhCacheManagerFactoryBean ehCacheCacheManager() {

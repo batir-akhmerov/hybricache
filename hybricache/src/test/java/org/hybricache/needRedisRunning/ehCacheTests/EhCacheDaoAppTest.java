@@ -1,11 +1,9 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid;
+package org.hybricache.needRedisRunning.ehCacheTests;
 
-import org.junit.Test;
-import org.r3p.cache.hybrid.dao.TestDao;
-
+import org.hybricache.testDao.TestDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -13,16 +11,16 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
- * The EhCacheDaoApp class
+ * The EhCacheDaoAppTest class
  *
  * @author Batir Akhmerov
  * Created on Jan 26, 2017
  */
-public class EhCacheDaoApp {
+public class EhCacheDaoAppTest {
 	
-	private static final Logger log = LoggerFactory.getLogger(EhCacheDaoApp.class);
+	private static final Logger log = LoggerFactory.getLogger(EhCacheDaoAppTest.class);
 
-	@Test
+	//@Test
 	public void test() {
 
 	    ApplicationContext context = new AnnotationConfigApplicationContext(TestAppConfig.class);

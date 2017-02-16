@@ -1,13 +1,13 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.remote.redis;
+package org.hybricache.remote.redis;
 
 import java.util.concurrent.Callable;
 
-import org.r3p.cache.hybrid.HybridCacheConfiguration;
-import org.r3p.cache.hybrid.remote.RemoteCache;
-import org.r3p.cache.hybrid.remote.RemoteValueWrapper;
+import org.hybricache.HybriCacheConfiguration;
+import org.hybricache.remote.RemoteCache;
+import org.hybricache.remote.RemoteValueWrapper;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -22,9 +22,9 @@ public abstract class AbstractRedisRemoteCache<C, K, V> implements RemoteCache<C
 	
 	protected JedisConnectionFactory jedisConnectionFactory;
 	protected RedisTemplate<K, RemoteValueWrapper<V>> redisTemplate;
-	protected HybridCacheConfiguration config;
+	protected HybriCacheConfiguration config;
 	
-	public AbstractRedisRemoteCache(HybridCacheConfiguration conf) {
+	public AbstractRedisRemoteCache(HybriCacheConfiguration conf) {
 		this.config = conf;
 		
 		this.jedisConnectionFactory = new JedisConnectionFactory();
@@ -87,11 +87,11 @@ public abstract class AbstractRedisRemoteCache<C, K, V> implements RemoteCache<C
 	}
 
 
-	public HybridCacheConfiguration getConfig() {
+	public HybriCacheConfiguration getConfig() {
 		return this.config;
 	}
 
-	public void setConfig(HybridCacheConfiguration config) {
+	public void setConfig(HybriCacheConfiguration config) {
 		this.config = config;
 	}
 

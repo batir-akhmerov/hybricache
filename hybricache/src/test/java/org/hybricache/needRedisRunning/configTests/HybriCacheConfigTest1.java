@@ -1,18 +1,18 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.config;
+package org.hybricache.needRedisRunning.configTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.util.List;
 
+import org.hybricache.HybriCacheConfiguration;
+import org.hybricache.HybriCacheManager;
+import org.hybricache.needRedisRunning.BaseTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.r3p.cache.hybrid.BaseTest;
-import org.r3p.cache.hybrid.HybridCacheConfiguration;
-import org.r3p.cache.hybrid.HybridCacheManager;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -26,28 +26,28 @@ import org.springframework.util.CollectionUtils;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = {HybridCacheAppConfig1.class})
-public class HybridCacheConfigTest1 extends BaseTest {
+@ContextConfiguration(classes = {HybriCacheAppConfig1.class})
+public class HybriCacheConfigTest1 extends BaseTest {
 	
 	@Test
 	public void test() {
 		
-		List<HybridCacheConfiguration> confList = this.cacheManager.getHybridCacheConfigurationList();
+		List<HybriCacheConfiguration> confList = this.cacheManager.getHybriCacheConfigurationList();
 		
 		assertFalse(CollectionUtils.isEmpty(confList));
-		assertEquals(3, confList.size());
+		assertEquals(4, confList.size());
 		
-		assertEquals(HybridCacheManager.CACHE_KEY, confList.get(0).getCacheName());
-		assertEquals(HybridCacheManager.CACHE_COMMON, confList.get(1).getCacheName());
+		assertEquals(HybriCacheManager.CACHE_KEY, confList.get(0).getCacheName());
+		assertEquals(HybriCacheManager.CACHE_COMMON, confList.get(1).getCacheName());
 		assertEquals("appCache", confList.get(2).getCacheName());
 		
 		test2Caches("appCache", "runtimeCache");
 			
-		confList = this.cacheManager.getHybridCacheConfigurationList();
+		confList = this.cacheManager.getHybriCacheConfigurationList();
 		
 		assertFalse(CollectionUtils.isEmpty(confList));
-		assertEquals(4, confList.size());
-		assertEquals("runtimeCache", confList.get(3).getCacheName());
+		assertEquals(6, confList.size());
+		assertEquals("runtimeCache", confList.get(4).getCacheName());
 		
 	}
 	

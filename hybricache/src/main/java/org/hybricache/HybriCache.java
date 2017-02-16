@@ -1,58 +1,58 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid;
+package org.hybricache;
 
 import static org.junit.Assert.assertNotNull;
 
 import java.util.concurrent.Callable;
 
-import org.r3p.cache.hybrid.HybridCacheConfiguration.CacheType;
-import org.r3p.cache.hybrid.key.HybridKey;
-import org.r3p.cache.hybrid.key.HybridKeyCache;
-import org.r3p.cache.hybrid.remote.RemoteCache;
-import org.r3p.cache.hybrid.remote.RemoteCacheFactory;
+import org.hybricache.key.HybriKey;
+import org.hybricache.key.HybriKeyCache;
+import org.hybricache.remote.RemoteCache;
+import org.hybricache.remote.RemoteCacheFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.ehcache.EhCacheCache;
 
 import net.sf.ehcache.Ehcache;
 
 /**
- * The HybridKeyCache class
+ * The HybriKeyCache class
  *
  * @author Batir Akhmerov
  * Created on Jan 27, 2017
  */
-public class HybridCache extends BaseCache implements Cache{
+public class HybriCache extends BaseCache implements Cache{
 	
-	private HybridKeyCache hybridKeyCache;
+	private HybriKeyCache hybriKeyCache;
 	
 	
-	public HybridCache(Ehcache ehCacheNative, HybridCacheConfiguration hybridCacheConfig, 
-			RemoteCacheFactory remoteCacheFactory, HybridKeyCache hybridKeyCache) {
-		super(ehCacheNative, hybridCacheConfig, remoteCacheFactory);		
-		if (isCacheHybrid()) {
-			assertNotNull(hybridKeyCache);
-			this.hybridKeyCache = hybridKeyCache;
-		}
+	public HybriCache(Ehcache ehCacheNative, HybriCacheConfiguration hybriCacheConfig, 
+			RemoteCacheFactory remoteCacheFactory, HybriKeyCache hybriKeyCache) {
+		super(ehCacheNative, hybriCacheConfig, remoteCacheFactory);
+		initHybriKeyCache(hybriKeyCache);
 	}
 	
-	public HybridCache(EhCacheCache ehCache, HybridCacheConfiguration hybridCacheConfig, 
-			RemoteCacheFactory remoteCacheFactory, HybridKeyCache hybridKeyCache) {
-		super(ehCache, hybridCacheConfig, remoteCacheFactory);		
-		if (isCacheHybrid()) {
-			assertNotNull(hybridKeyCache);
-			this.hybridKeyCache = hybridKeyCache;
-		}
+	public HybriCache(EhCacheCache ehCache, HybriCacheConfiguration hybriCacheConfig, 
+			RemoteCacheFactory remoteCacheFactory, HybriKeyCache hybriKeyCache) {
+		super(ehCache, hybriCacheConfig, remoteCacheFactory);		
+		initHybriKeyCache(hybriKeyCache);
 	}
 
+	public void initHybriKeyCache(HybriKeyCache hybriKeyCache) {
+		String cacheName = getHybriCacheConfig().getCacheName();
+		if (isCacheHybrid() && !HybriCacheManager.CACHE_KEY.equals(cacheName) && !HybriCacheManager.CACHE_COMMON.equals(cacheName)) {
+			assertNotNull(hybriKeyCache);
+			this.hybriKeyCache = hybriKeyCache;
+		}
+	}
 	
 	@Override
 	public void clear() {
 		getEhCache().clear();	
 		getRemoteCache().clear();
 		if (isCacheHybrid()) {
-			getHybridKeyCache().clear();
+			getHybriKeyCache().clear();
 		}
 	}
 
@@ -79,15 +79,15 @@ public class HybridCache extends BaseCache implements Cache{
 			return getEhCache().get(key);
 		}
 		
-		// handle hybrid cache
-		HybridKeyCache keyCache = getHybridKeyCache();
-		HybridKey keyLocal = keyCache.getKeyLocal(key);
+		// handle hybri cache
+		HybriKeyCache keyCache = getHybriKeyCache();
+		HybriKey keyLocal = keyCache.getKeyLocal(key);
 		if (keyCache.isKeyRecent(keyLocal)) { 
 			// return a local cached value if the key is still recent
 			return getEhCache().get(key);
 		}
 		
-		HybridKey keyRemote = keyCache.getKeyRemote(key);
+		HybriKey keyRemote = keyCache.getKeyRemote(key);
 		if (keyCache.isKeyValid(keyLocal, keyRemote)) {
 			// return a local cached value if the key is valid and update its last accessed time
 			keyLocal.setAccessTime();
@@ -100,11 +100,11 @@ public class HybridCache extends BaseCache implements Cache{
 		if (remoteValueWrapper != null) {
 			// update local cache value and key
 			getEhCache().put(key, remoteValueWrapper.get());
-			updateHybridKeyCache(key, keyCache, keyRemote, keyLocal);
+			updateHybriKeyCache(key, keyCache, keyRemote, keyLocal);
 		}
 		else {
 			// cache value has been removed from remote cache
-			keyCache.removeBothHybridKeys(key);
+			keyCache.removeBothHybriKeys(key);
 			getEhCache().evict(key);
 		}
 		return remoteValueWrapper;
@@ -159,18 +159,18 @@ public class HybridCache extends BaseCache implements Cache{
 			getEhCache().put(key, value);
 			return;
 		}
-		// handle hybrid cache
+		// handle hybri cache
 		getEhCache().put(key, value);
 		getRemoteCache().put(key, value);
 		
-		// save hybrid keys
-		HybridKeyCache keyCache = getHybridKeyCache();
-		HybridKey keyRemote = keyCache.getKeyRemote(key);
-		HybridKey keyLocal = keyCache.getKeyLocal(key);
-		updateHybridKeyCache(key, keyCache, keyRemote, keyLocal);
+		// save hybri keys
+		HybriKeyCache keyCache = getHybriKeyCache();
+		HybriKey keyRemote = keyCache.getKeyRemote(key);
+		HybriKey keyLocal = keyCache.getKeyLocal(key);
+		updateHybriKeyCache(key, keyCache, keyRemote, keyLocal);
 	}
 	
-	protected void updateHybridKeyCache(Object key, HybridKeyCache keyCache, HybridKey keyRemote, HybridKey keyLocal){
+	protected void updateHybriKeyCache(Object key, HybriKeyCache keyCache, HybriKey keyRemote, HybriKey keyLocal){
 		if (keyRemote.isUndefined()) {
 			keyRemote.nextRevision();
 			keyCache.putKeyRemote(key, keyRemote);
@@ -181,7 +181,7 @@ public class HybridCache extends BaseCache implements Cache{
 	}
 	
 	/**
-	 * TODO: implement hybrid logic here
+	 * TODO: implement hybri logic here
 	 */
 	@Override
 	public ValueWrapper putIfAbsent(Object key, Object value) {
@@ -195,20 +195,7 @@ public class HybridCache extends BaseCache implements Cache{
 	}
 
 	
-	
-	
-	
 
-	public boolean isCacheRemote() {
-		return this.hybridCacheConfig.getCacheType() == CacheType.REMOTE;
-	}
-	public boolean isCacheHybrid() {
-		return this.hybridCacheConfig.getCacheType() == CacheType.HYBRID;
-	}
-	public boolean isCacheLocal() {
-		return this.hybridCacheConfig.getCacheType() == CacheType.LOCAL;
-	}
-	
 	
 	
 	@SuppressWarnings("rawtypes")
@@ -230,13 +217,13 @@ public class HybridCache extends BaseCache implements Cache{
 	}
 
 
-	public HybridKeyCache getHybridKeyCache() {
-		return this.hybridKeyCache;
+	public HybriKeyCache getHybriKeyCache() {
+		return this.hybriKeyCache;
 	}
 
 
-	public void setHybridKeyCache(HybridKeyCache hybridKeyCache) {
-		this.hybridKeyCache = hybridKeyCache;
+	public void setHybriKeyCache(HybriKeyCache hybriKeyCache) {
+		this.hybriKeyCache = hybriKeyCache;
 	}
 
 	

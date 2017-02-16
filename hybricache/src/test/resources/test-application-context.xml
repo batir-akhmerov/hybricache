@@ -22,10 +22,10 @@
 		<property name="transactionalMode" value="off" />
 	</bean>
 	
-	<bean name="defaultHybridConfiguration" class="org.r3p.cache.hybrid.HybridCacheConfiguration">
+	<bean name="defaultHybriConfiguration" class="org.hybricache.HybriCacheConfiguration">
 		<property name="ehCacheConfiguration" ref="defaultEhCacheConfiguration" />
 		<property name="cacheType">
-			<util:constant static-field="org.r3p.cache.hybrid.HybridCacheConfiguration.CacheType.LOCAL"/>
+			<util:constant static-field="org.hybricache.HybriCacheConfiguration.CacheType.LOCAL"/>
 		</property>
 	</bean>	
 	 -->

@@ -1,14 +1,13 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.local;
+package org.hybricache.needRedisRunning.ehCacheTests;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.r3p.cache.hybrid.HybridCacheConfiguration;
-import org.r3p.cache.hybrid.HybridCacheConfiguration.CacheType;
-import org.r3p.cache.hybrid.TestAppConfig;
+import org.hybricache.HybriCacheConfiguration;
+import org.hybricache.HybriCacheConfiguration.CacheType;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,17 +33,17 @@ public class LocalCacheAppConfig1 extends TestAppConfig {
 	@Bean
 	public EhCacheManagerFactoryBean ehCacheCacheManager() {
 		EhCacheManagerFactoryBean cmfb = new EhCacheManagerFactoryBean();
-		cmfb.setConfigLocation(new ClassPathResource("ehcacheSimple.xml"));
+		cmfb.setConfigLocation(new ClassPathResource("ehcachePerformance.xml"));
 		cmfb.setShared(true);
 		return cmfb;
 	}
 	
 	
 	@Bean
-	public List<HybridCacheConfiguration> hybridCacheConfigurationList() {
-		List<HybridCacheConfiguration> list = new ArrayList<>();
-		list.add( new HybridCacheConfiguration(
-				"appCache",
+	public List<HybriCacheConfiguration> hybriCacheConfigurationList() {
+		List<HybriCacheConfiguration> list = new ArrayList<>();
+		list.add( new HybriCacheConfiguration(
+				"ehCache",
 				CacheType.LOCAL,
 				0
 			)

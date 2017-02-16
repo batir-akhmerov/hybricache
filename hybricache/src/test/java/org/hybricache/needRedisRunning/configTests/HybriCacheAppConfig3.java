@@ -1,14 +1,14 @@
 /**
  * 
  */
-package org.r3p.cache.hybrid.config;
+package org.hybricache.needRedisRunning.configTests;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.r3p.cache.hybrid.HybridCacheConfiguration;
-import org.r3p.cache.hybrid.HybridCacheConfiguration.CacheType;
-import org.r3p.cache.hybrid.TestAppConfig;
+import org.hybricache.HybriCacheConfiguration;
+import org.hybricache.HybriCacheConfiguration.CacheType;
+import org.hybricache.needRedisRunning.ehCacheTests.TestAppConfig;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,7 +26,7 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 @ComponentScan({ "org.r3p.cache.*" })
 @PropertySource("classpath:application.properties")
-public class HybridCacheAppConfig3 extends TestAppConfig {
+public class HybriCacheAppConfig3 extends TestAppConfig {
 	
 
 	
@@ -41,15 +41,15 @@ public class HybridCacheAppConfig3 extends TestAppConfig {
 	
 	
 	@Bean
-	public List<HybridCacheConfiguration> hybridCacheConfigurationList() {
-		List<HybridCacheConfiguration> list = new ArrayList<>();
-		list.add( new HybridCacheConfiguration(
+	public List<HybriCacheConfiguration> hybriCacheConfigurationList() {
+		List<HybriCacheConfiguration> list = new ArrayList<>();
+		list.add( new HybriCacheConfiguration(
 				"appCache",
 				CacheType.LOCAL,
 				0
 			)
 		);
-		list.add( new HybridCacheConfiguration(
+		list.add( new HybriCacheConfiguration(
 				"remoteCache",
 				CacheType.REMOTE,
 				0
