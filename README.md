@@ -1,9 +1,20 @@
+<a name="top"></a>
 # HybriCache
 HybriCache is a hybrid cache solution based on EhCache and Redis. HybriCache is almost as fast as EhCache and utilization of Redis makes HybriCache a Cluster Environment friendly. HybriCache is ideal solution if you’re switching over to a clustered environment of Amazon Web Services and need a fast caching library. If your application is already configured for EhCache – that’s even easier, HybriCache uses existing EhCache configuration, just add HybriCache jar to the classpath, replace EhCacheManager with HybriCacheManager in a spring context and set Elasticache server’s Host and Port to the HybriCacheManager instance. And that is all.
 
 ## Table of Content
+* [What is wrong with AWS Elasticache?](#whats_wrong_elasticache)
+* [Why HybriCache is faster than AWS Elasticache Redis?](#hybricache_faster)
+* [HybriCache Cache Type](#hybricache_type)
 * [Getting Started](#getting_started)
+  * [Download HybriCache Jar](#download_jar)
+  * [Download dependencies](#download_other_jar)
+  * [Include Jars](#include_jar)
+  * [Configure Caches](#configure_caches)
+  * [Declare Cache Manager](#declare_cache_manager)
+  * [Set Environment Properties](#env_properties)
 
+<a name="whats_wrong_elasticache"></a>
 ## What is wrong with AWS Elasticache? 
 AWS Elasticache Redis is a non-sql in-memory database and:
 
@@ -32,7 +43,7 @@ As you can see - EhCache is almost 15 times faster than Redis caching.
 
 So, what is wrong with AWS Elasticache?  - Network Latency + Time needed for object Serialization, along with single-threaded nature of Redis.
 
-
+<a name="hybricache_faster"></a>
 ## Why HybriCache is faster than AWS Elasticache Redis?
 HybriCache  is NOT a replacement for AWS Elasticache nor EhCache. HybriCache utilizes a hybrid cache model when both EhCache and Redis work together caching objects:
 
@@ -48,6 +59,7 @@ Cached Objects are synchronized using Revisions:
 
 “Key Trust Period” is another mechanism that makes HybriCache even faster. “Key Trust Period” is a time period in milliseconds in which HybriCache can trust the Local Cache Revision. This is useful when objects are rarely changed in Cache but might be extracted from HybriCache more than once during one page load. Setting “Key Trust Period” can prevent redundant calls to Redis trying to verify Remote Cache Revision. “Key Trust Period” default value is 1000 milliseconds and it can be set per each Cache Database.
 
+<a name="hybricache_type"></a>
 ## HybriCache Cache Types
 There are 3 Cache Types in HybriCache:
 
@@ -58,18 +70,21 @@ There are 3 Cache Types in HybriCache:
 
 <a name="getting_started"></a>
 ## Getting Started
-
+<a name="download_jar"></a>
 1. Download the latest [hybricache.jar]( https://github.com/batir-akhmerov/hybricache/raw/master/hybricache/target/hybricache-0.0.1.jar)
 
+<a name="download_other_jar"></a>
 2. Download other dependencies jars (if your application does not use them yet). A full list of dependencies is in [pom.xml](https://raw.githubusercontent.com/batir-akhmerov/hybricache/master/hybricache/pom.xml)
 
+<a name="include_jar"></a>
 3. Include jars into a .classpath file:
 
    ```
    <classpathentry kind="lib" path="hybricache.jar"/>
    <!-- include all other dependencies jars if needed -->
    ```
-    
+   
+<a name="configure_caches"></a>    
 4. Configure Caches. If your application already uses EhCache then by default no additional configuration is needed. HybriCache will configure itself for all EhCache Caches set in ehcache.xml. Here is a sample ehcache.xml:
 
    ```
@@ -123,7 +138,7 @@ There are 3 Cache Types in HybriCache:
    Here mergedCssJsCache is configured as a LOCAL cache and userSessionCache as REMOTE. 
    Cache daoBeanCache will be a HYBRID cache by default.
    
-
+<a name="declare_cache_manager"></a> 
 5. Declare default application cacheManager. If ehCacheManager was a default manager - rename it since it's needed for HybriCache, otherwise declare ehCahceManager too:
 
    ```
@@ -160,7 +175,7 @@ public class AppContextConfiguration {
 }
 
    ```
-
+<a name="env_properties"></a> 
 6. Add AWS Elasticache Redis host name and port into environment properties.
 
    ```
