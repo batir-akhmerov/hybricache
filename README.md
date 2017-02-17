@@ -43,6 +43,8 @@ As you can see - EhCache is almost 15 times faster than Redis caching.
 
 So, what is wrong with AWS Elasticache?  - Network Latency + Time needed for object Serialization, along with single-threaded nature of Redis.
 
+[Top](#top)
+
 <a name="hybricache_faster"></a>
 ## Why HybriCache is faster than AWS Elasticache Redis?
 HybriCache  is NOT a replacement for AWS Elasticache nor EhCache. HybriCache utilizes a hybrid cache model when both EhCache and Redis work together caching objects:
@@ -59,6 +61,8 @@ Cached Objects are synchronized using Revisions:
 
 “Key Trust Period” is another mechanism that makes HybriCache even faster. “Key Trust Period” is a time period in milliseconds in which HybriCache can trust the Local Cache Revision. This is useful when objects are rarely changed in Cache but might be extracted from HybriCache more than once during one page load. Setting “Key Trust Period” can prevent redundant calls to Redis trying to verify Remote Cache Revision. “Key Trust Period” default value is 1000 milliseconds and it can be set per each Cache Database.
 
+[Top](#top)
+
 <a name="hybricache_type"></a>
 ## HybriCache Cache Types
 There are 3 Cache Types in HybriCache:
@@ -67,6 +71,7 @@ There are 3 Cache Types in HybriCache:
 2. LOCAL caches objects ONLY using EhCache instance running on a webserver (one of instances in a cluster). No clustering is supported by this type of cache. A fastest type of cache. Useful for caches when synchronization with a cluster is not critical but speed is important, e.g. caching of Merged CSS and JS resources.
 3. REMOTE caches objects ONLY using AWS Elasticache Redis instance. Clustering is supported. Slowest cache type. Used for object caches when speed is not critical but the latest cache revision is highly important, e.g. caching of User’s Session metadata.
 
+[Top](#top)
 
 <a name="getting_started"></a>
 ## Getting Started
@@ -182,3 +187,5 @@ public class AppContextConfiguration {
    remote.cache.server.host=https://[url.to elasticache.redis.instance].amazonaws.com
    remote.cache.server.port=6379
    ```
+   
+[Top](#top)
