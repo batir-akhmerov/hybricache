@@ -56,8 +56,8 @@ There are 3 Cache Types in HybriCache:
 3. REMOTE caches objects ONLY using AWS Elasticache Redis instance. Clustering is supported. Slowest cache type. Used for object caches when speed is not critical but the latest cache revision is highly important, e.g. caching of User’s Session metadata.
 
 
-## Getting Started<a name="getting_started"></a>
-
+<a name="getting_started"></a>
+## Getting Started
 
 1. Download the latest [hybricache.jar]( https://github.com/batir-akhmerov/hybricache/raw/master/hybricache/target/hybricache-0.0.1.jar)
 
