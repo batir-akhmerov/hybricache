@@ -1,6 +1,9 @@
 # HybriCache
 HybriCache is a hybrid cache solution based on EhCache and Redis. HybriCache is almost as fast as EhCache and utilization of Redis makes HybriCache a Cluster Environment friendly. HybriCache is ideal solution if you’re switching over to a clustered environment of Amazon Web Services and need a fast caching library. If your application is already configured for EhCache – that’s even easier, HybriCache uses existing EhCache configuration, just add HybriCache jar to the classpath, replace EhCacheManager with HybriCacheManager in a spring context and set Elasticache server’s Host and Port to the HybriCacheManager instance. And that is all.
 
+## Table of Content
+* [Getting Started](#getting_started)
+
 ## What is wrong with AWS Elasticache? 
 AWS Elasticache Redis is a non-sql in-memory database and:
 
@@ -53,7 +56,8 @@ There are 3 Cache Types in HybriCache:
 3. REMOTE caches objects ONLY using AWS Elasticache Redis instance. Clustering is supported. Slowest cache type. Used for object caches when speed is not critical but the latest cache revision is highly important, e.g. caching of User’s Session metadata.
 
 
-## Getting Started
+## Getting Started<a name="getting_started"></a>
+
 
 1. Download the latest [hybricache.jar]( https://github.com/batir-akhmerov/hybricache/raw/master/hybricache/target/hybricache-0.0.1.jar)
 
