@@ -1,6 +1,6 @@
 <a name="top"></a>
 # HybriCache
-HybriCache is a hybrid cache solution based on EhCache and Redis. HybriCache is almost as fast as EhCache and utilization of Redis makes HybriCache a Cluster Environment friendly. HybriCache is ideal solution if you’re switching over to a clustered environment of Amazon Web Services and need a fast caching library. If your application is already configured for EhCache – that’s even easier, HybriCache uses existing EhCache configuration, just add HybriCache jar to the classpath, replace EhCacheManager with HybriCacheManager in a spring context and set Elasticache server’s Host and Port to the HybriCacheManager instance. And that is all.
+HybriCache is a hybrid cache solution based on EhCache and Redis. HybriCache is almost as fast as EhCache and utilization of Redis makes HybriCache a Cluster friendly. HybriCache is ideal solution if you’re switching over to a clustered environment on AWS and need a fast caching library. If your application is already configured for EhCache – that’s even easier, HybriCache uses existing EhCache configuration, just add HybriCache jar to the classpath, replace EhCacheManager with HybriCacheManager in a spring context and set Elasticache server’s Host and Port to the HybriCacheManager instance. And that is all.
 
 ## Table of Content
 * [What is wrong with AWS Elasticache?](#whats_wrong_elasticache)
@@ -18,7 +18,7 @@ HybriCache is a hybrid cache solution based on EhCache and Redis. HybriCache is 
 ## What is wrong with AWS Elasticache? 
 AWS Elasticache Redis is a non-sql in-memory database and:
 
-1.	It’s located in a separate server instance, which is being accessed over TCP/IP protocol.
+1.	Network Latency. Redis is being accessed over TCP/IP protocol and often located on a separate server instance.
 
 2.	Every time you put/get an object to or from Redis it takes some time to serialize/deserialize object’s instance.
 
@@ -32,7 +32,7 @@ But if a number of cache hits is around of few hundreds or even thousands - you 
 
 Things did not get much better after upgrading to the top-end memory optimized Elasticache instance type with high network performance – page load goes to 5-6 seconds which is still not acceptable for a production site.
 
-HybriCache source code contains 2 performance tests where we check execution time of 3000 get object cache operations in 2 modes:
+HybriCache source code contains 2 performance tests where we check execution time of 3000 GET Object calls in 2 modes:
 
 1.	Local (only EhCache is enabled). Result: Execution took 37 milliseconds
 
@@ -53,23 +53,23 @@ HybriCache  is NOT a replacement for AWS Elasticache nor EhCache. HybriCache uti
 
 2.	Caching Remotely on AWS Elasticache (Redis) for clustering support.
 
-Cached Objects are synchronized using Revisions:
+Cached Objects are replicated using Revisions:
 
 *	If a Local Cache Revision matches a Remote Cache Revision – Cached Object is extracted from a fast Local Cache (EhCache).
 
 *	Otherwise Cached Object is taken from a Remote Cache (Redis) and HybriCache updates Local Cache.
 
-“Key Trust Period” is another mechanism that makes HybriCache even faster. “Key Trust Period” is a time period in milliseconds in which HybriCache can trust the Local Cache Revision. This is useful when objects are rarely changed in Cache but might be extracted from HybriCache more than once during one page load. Setting “Key Trust Period” can prevent redundant calls to Redis trying to verify Remote Cache Revision. “Key Trust Period” default value is 1000 milliseconds and it can be set per each Cache Database.
+“Key Trust Period” is another mechanism that makes HybriCache even faster. “Key Trust Period” is a time period in milliseconds in which HybriCache can trust the Local Cache Revision. This is useful when objects are rarely changed in Cache but might be extracted from HybriCache more than once during one page load. Setting “Key Trust Period” can prevent redundant calls to Redis to verify the Remote Cache Revision - our tests shows that even such a simple call "GET Integer Key from Redis" made 3000 times dramatically affects performance. “Key Trust Period” defaults to 1000 milliseconds and can be overridden for each Cache Database.
 
 [Top](#top)
 
 <a name="hybricache_type"></a>
 ## HybriCache Cache Types
-There are 3 Cache Types in HybriCache:
+Each Cache Database can be set to one of 3 Cash Strategies(Types) supported by HybriCache:
 
-1. HYBRID default cache type utilizing hybrid caching model (see above).
-2. LOCAL caches objects ONLY using EhCache instance running on a webserver (one of instances in a cluster). No clustering is supported by this type of cache. A fastest type of cache. Useful for caches when synchronization with a cluster is not critical but speed is important, e.g. caching of Merged CSS and JS resources.
-3. REMOTE caches objects ONLY using AWS Elasticache Redis instance. Clustering is supported. Slowest cache type. Used for object caches when speed is not critical but the latest cache revision is highly important, e.g. caching of User’s Session metadata.
+1. HYBRID - default cache type utilizing hybrid caching model (see above).
+2. LOCAL - caches objects ONLY on local EhCache instance running on a webserver (one of instances in a cluster). No cache replication is supported by this type of cache. A fastest type of cache. Useful for caches when synchronization with a cluster is not critical but speed is important, e.g. caching of Merged CSS and JS resources.
+3. REMOTE - caches objects ONLY on remote AWS Elasticache Redis instance. Clustering is supported. Slowest cache type. Used for object caches when speed is not critical but the latest cache revision is highly important, e.g. caching of User’s Session metadata.
 
 [Top](#top)
 
